@@ -1,12 +1,8 @@
 import { Logger } from '../core/Logger';
 import { LogOptions } from '../types';
 
-const loggerMap = new WeakMap<object, Logger>();
-const metadataMap = new WeakMap<object, Record<string, any>>();
-const LoggerSymbol = Symbol('logger');
-const MetadataSymbol = Symbol('logMetadata');
-
 export function LogClass(logger: Logger, metadata?: Record<string, any>) {
+  // @ts-expect-error function is not typed
   return function <T extends { new (...args: any[]): object }>(
     target: T,
     context: ClassDecoratorContext
@@ -23,15 +19,7 @@ export function LogClass(logger: Logger, metadata?: Record<string, any>) {
     }
   };
 }
-// Helper function to get logger for an instance
-function getLogger(instance: object): Logger | undefined {
-  return loggerMap.get(instance);
-}
 
-// Helper function to get metadata for an instance
-function getMetadata(instance: object): Record<string, any> | undefined {
-  return metadataMap.get(instance);
-}
 export function LogSync(options: LogOptions = {}) {
   return function (originalMethod: any, context: ClassMethodDecoratorContext) {
     const methodName = context.name.toString();
